@@ -1,0 +1,29 @@
+{
+  "name": "xlsxtosql",
+  "version": "1.0.0",
+  "description": "Creates a SQL Statement from an XLSX sheet.",
+  "main": "XLSXToSQL.js",
+  "scripts": {
+    "start": "node XLSXToSQL.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zachdorman/XLSXToSQL.git"
+  },
+  "keywords": [
+    "Node.js",
+    "SQL",
+    "XLSX",
+    "ETL"
+  ],
+  "author": "Zach Dorman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zachdorman/XLSXToSQL/issues"
+  },
+  "homepage": "https://github.com/zachdorman/XLSXToSQL#readme",
+  "dependencies": {
+    "node-xlsx": "^0.15.0"
+  }
+}
