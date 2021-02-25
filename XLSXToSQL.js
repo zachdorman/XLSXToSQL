@@ -102,6 +102,62 @@ let ArrayToSQL = {
             allRowsAsSelects = allRowsAsSelects.substr(0, allRowsAsSelects.length-11);
         }
         return allRowsAsSelects;
+    },
+    ToINSERT: function(inputArrays){
+        //Use to check to see if we are at the end of rows or columns to determine when NOT to include ','s or 'UNION ALL's
+        const isInLastPosition = function(currentArrayNumber, totalArrayLength){
+
+            if(currentArrayNumber == totalArrayLength-1){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+
+        //TODO: Input is fed in with the ability to do multiple sheets in 1. But at this time I have no need for it. 
+        //So just grab the first sheet
+        let inputArray = inputArrays[0];
+
+
+        let allRowsAsSelects = "";
+        for (let i_datarows = 0; i_datarows < inputArray.Rows.length; i_datarows++) {
+            const currentRow = inputArray.Rows[i_datarows];
+
+            //Clean the inputArray.Rows of empty rows
+            if(currentRow.length == 0){
+                continue;
+            }
+
+            
+            //let currentSelect = `INSERT INTO 'dhe'.'customer' () VALUES ();`;
+            let currentSelect = ``;
+            currentSelect += `INSERT INTO 'dhe'.'customer' (${inputArray.Header.join(',')}) VALUES ('${currentRow.join('\',\'')}');`;
+
+            /*
+            for (let i_datacolumn = 0; i_datacolumn < currentRow.length; i_datacolumn++) {
+                const currentColumnValue = currentRow[i_datacolumn];
+                //Add the current data column and alias it as the header row in the same position
+                //Scrub special characters out of the Header Title 
+                currentSelect += `'${currentColumnValue}' as ${inputArray.Header[i_datacolumn].replace(/[^a-zA-Z]/g,"")}`;
+
+                if(isInLastPosition(i_datacolumn,currentRow.length) == false){
+                    currentSelect += ',';
+                }
+            }
+            */
+
+            currentSelect += '\n';
+            //Do Not Add a Union All Statement on the last SELECT
+
+            allRowsAsSelects += currentSelect;
+        }                     
+        
+        //Check that the END of the SELECT statement doesn't contain a UNION ALL with no further rows
+        if(allRowsAsSelects.substr(allRowsAsSelects.length-10,allRowsAsSelects.length-2).trimRight() == "UNION ALL"){
+            allRowsAsSelects = allRowsAsSelects.substr(0, allRowsAsSelects.length-11);
+        }
+        return allRowsAsSelects;
     }
 
 }
@@ -109,17 +165,11 @@ let ArrayToSQL = {
 //Input Array For Processing
 let FilesToETL = [
     {
-        FileLocation : "48,750 FLEET190529.xlsx",        
-        OutputFileName: "48,750 FLEET190529.sql",
-        ProcessingFunction: ArrayToSQL.ToSELECT,
+        FileLocation : "x.xlsx",        
+        OutputFileName: "x.sql",
+        ProcessingFunction: ArrayToSQL.ToINSERT,
         HasHeader: true
-    },
-    {
-        FileLocation : "771,044 FLEET190508.xlsx",        
-        OutputFileName: "771,044 FLEET190508.sql",
-        ProcessingFunction: ArrayToSQL.ToSELECT,
-        HasHeader: true
-    },
+    }
 ];
 
 //Loop through input array and run the desired processing function as determined in the Array
